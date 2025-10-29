@@ -2,18 +2,18 @@ name: Keep HuggingFace Space Alive
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # 每30分钟运行一次
-  workflow_dispatch:
+    - cron: "0 */6 * * *"  # 每3小时执行一次
+  workflow_dispatch:        # 可手动触发
 
 jobs:
-  ping-space:
+  ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping HuggingFace Space via API
+      - name: Ping HuggingFace Space with token
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          URL: "https://huggingface.co/api/spaces/myleyu/mysol"
         run: |
-          URL="https://huggingface.co/api/spaces/myleyu/mysol"
           echo "Pinging $URL"
-          RESULT=$(curl -s -H "Authorization: Bearer $HF_TOKEN" -o /dev/null -w "%{http_code} %{time_total}" "$URL")
-          echo "Result: $RESULT"
+          result=$(curl -s -o /dev/null -w "%{http_code} %{time_total}" -H "Authorization: Bearer $HF_TOKEN" $URL)
+          echo "Result: $result"
